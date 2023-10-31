@@ -1,0 +1,270 @@
+*{
+    margin:0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+body, h1, h2, p, ul, li {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    height: 100vh;
+    background-color: #f5f5f5;
+    font-family: Arial, sans-serif;
+    background-image: url('https://as2.ftcdn.net/v2/jpg/01/31/27/99/1000_F_131279986_ToLS0CR4O2VBc2vk7qNI7HUxeQd9refB.jpg');
+    background-size: cover;
+
+}
+.head-title{
+    padding:10px;
+    text-align: center;
+}
+.main {
+    width: 70%;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0px auto;
+    padding: 20px;
+    background: rgba(30, 27, 26, 0.5);
+    border-radius: 5px
+}
+
+.choosed-player{
+    width: 50%;
+    background-image: url('./pictures/Ground.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.player-details {
+    width: 50%;
+    background-color: rgb(245, 245, 245);
+    border-radius: 5px;
+    box-shadow: rgb(0 0 0 / 10%) 0px 2px 4px;
+}
+
+.headers {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.headers button {
+    background-color: #444;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+}
+.active-button {
+    color: #f8f5f5; 
+ }
+.headers button:hover {
+    background-color: #555;
+}
+
+.content {
+    padding: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+td {
+    padding: 5px;
+    text-align: center;
+    border: 1px solid #ccc;
+}
+
+td img {
+    display: block;
+    margin: 0 auto;
+}
+
+tr.row1:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+tr.row1:nth-child(even) {
+    background-color: #e5e5e5;
+}
+
+#data th {
+    background-color: #333;
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+    padding: 5px;
+}
+
+.choosed-player {
+    padding: 20px;
+}
+
+.fantasy-tip-row{
+    display:flex;
+    flex-wrap: wrap;
+    justify-content: center;
+        height: 113px;
+}
+.player-position-info {
+    
+    font-weight: bold;
+    padding: 5px;
+}
+.players-list {
+    width:100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+.player-info {
+    text-align: center;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+.player-image {
+    max-width: 50px;
+    max-height: 60px;
+}
+.player-name{
+    font-size: 10px;
+    background: beige;
+}
+
+.captain-icon {
+    width: 20px;
+    height: 24px;
+}
+.vice-captain-icon {
+    width: 20px;
+    height: 24px;
+}
+.captain-logo, .viceCaptain-logo{
+    position: absolute;
+    right: 10%;
+    top: 0px;
+}
+
+
+.modal-dialog {
+    background: #fff;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    max-width: 80%;
+  }
+  .modal-header {
+    background: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+  }
+  .modal-title {
+    font-size: 20px;
+  }
+
+  .modal-footer {
+    background: #333;
+    color: #fff;
+    text-align: right;
+    padding: 10px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+  }
+  .selected-player {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    background: azure;
+    border: 1px solid;
+    margin: 1px;
+  }
+  .playerSelection{
+    margin-right:10px;
+  }
+  .selected-player img {
+    max-width: 50px;
+    max-height: 60px;
+    margin-left: 10px;
+  }
+  
+  .selected-player p {
+    font-size: 16px;
+    margin: 0;
+  }
+  
+  .selected-player input[type="radio"] {
+    margin-right: 5px;
+  }
+  
+  .selected-player label {
+    font-size: 14px;
+  }
+ /* satisfy  validatePlayersCount function then show  */
+
+
+
+ .alert {
+    position: relative;
+    top: 10;
+    left: 0;
+    width: auto;
+    height: auto;
+    padding: 10px;
+    margin: 10px;
+    line-height: 1.8;
+    border-radius: 5px;
+    cursor: hand;
+    cursor: pointer;
+    font-family: sans-serif;
+    font-weight: 400;
+  }
+  
+  .alertCheckbox {
+    display: none;
+  }
+  
+  :checked + .alert {
+    display: none;
+  }
+  
+  .alertText {
+    display: table;
+    margin: 0 auto;
+    text-align: center;
+    font-size: 16px;
+  }
+  
+  .alertClose {
+    float: right;
+    padding-top: 5px;
+    font-size: 10px;
+  }
+  
+  .clear {
+    clear: both;
+  }
+  
+  .warning {
+    background-color: #FDF7DF;
+    border: 1px solid #FEEC6F;
+    color: #C9971C;
+  }
+  
+  
