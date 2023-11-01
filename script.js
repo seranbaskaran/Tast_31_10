@@ -575,6 +575,7 @@ function validateCricketTeam(allPlayers) {
   checkCount(roleCounts);
   allPlayer.forEach((player)=>{
     if(player.visible==false){
+      player.disable=false;
       // team based validation
       if(roleCounts[player.team]>=7){
         player.disable=true;
