@@ -288,9 +288,12 @@ function displayPlayersByRole(role) {
         const row = document.createElement('tr');
         row.setAttribute('class', 'row1');
         row.addEventListener('click', () => {
+          if(player.disable==true){
+            return;
+          }
           if (player.visible === false) {
             // Check if the player can be selected based on your restrictions
-            let count = 0;
+            /*let count = 0;
             allPlayer.forEach((val) => {
               if (val.visible === true) {
                 count++;
@@ -343,8 +346,7 @@ function displayPlayersByRole(role) {
             if (count >= 7) {
               alert('Cannot select more players from the same team');
               return;
-            }
-           
+            }*/
             player.visible = true;
             showPlayerInSection(allPlayer);
           } 
@@ -355,11 +357,10 @@ function displayPlayersByRole(role) {
           }
           // Toggle row background color
           row.style.backgroundColor = player.visible ? 'rgba(151, 170, 51, 0.4)' : '';
-          
           //checkRoleRestrictions();
           validateCricketTeam(allPlayer)
         });
-        
+      
         player.visible==true?row.style.backgroundColor='rgba(151,170,51,0.4)':row.style.backgroundColor='';
         const playerTypeImage = getPlayerTypeImage(player.role);
         const thumbUrl = player.team === "New Zealand" ? teamData.teama.thumb_url : teamData.teamb.thumb_url;
@@ -432,15 +433,6 @@ function showPlayerInSection(allPlayer) {
   })
 }
 
-/* function removePlayer(player) {
-  const index = selectedPlayers.findIndex(p => {
-    p.captain=false;
-    p.vicecaptain=false;
-    return p.player_id === player.player_id});
-  if (index !== -1) {
-      selectedPlayers.splice(index, 1);
-  }
-} */
 // Function to get the player type
 function getPlayerTypeStr(playerRole) {
     switch (playerRole) {
@@ -454,7 +446,6 @@ function getPlayerTypeStr(playerRole) {
             return 'bowler';
         default:
             return 
-            // Function to ge'other';
     }
 }
 
@@ -537,32 +528,21 @@ document.getElementById("nextButton").addEventListener("click", () => {
   });
 });
 
+function checkCount(roleCounts){
+  // Initialize role counts
+  for (let i in roleCounts) {
+    roleCounts[i] = 0;
+}
 
-
-
- function checkCount(roleCounts){
-
-    allPlayer.forEach((player)=>{
-      if(player.visible){
-        if(!roleCounts['selectedPlayerCount']){
-          roleCounts['selectedPlayerCount'] = 0;
-        }
-
-        if (!roleCounts[player.role]) 
-        {
-          roleCounts[player.role] = 0;
-        }
-        if(!roleCounts[player.team]){
-          roleCounts[player.team]=0;
-        }
-        roleCounts['selectedPlayerCount']++;
-        roleCounts[player.role]++;
-        roleCounts[player.team]++;
-      }
-    })
-    console.log(roleCounts);
-} 
-
+allPlayer.forEach((player) => {
+  if (player.visible) {
+    // Update role counts
+    roleCounts.selectedPlayerCount += 1;
+    roleCounts[player.role]++;
+    roleCounts[player.team]++;
+    }
+  });
+}
 function getMinimumRequiredPlayers(role, roleCounts){
   let requiredCount = 0;
   switch(role){
@@ -573,7 +553,7 @@ function getMinimumRequiredPlayers(role, roleCounts){
       break;
     case 'bat':
     case 'bowl':
-      let requiredCount = 3- roleCounts[role] > 0;
+       requiredCount = 3- roleCounts[role] > 0;
       if(3- roleCounts[role] > 0) 
         return requiredCount = 3- roleCounts[role]; 
       break;
@@ -582,13 +562,16 @@ function getMinimumRequiredPlayers(role, roleCounts){
 }
 
 function validateCricketTeam(allPlayers) {
-  let roleCounts = {};
-  const playerTypes = {
-    batsman: { min: 3, max: 6 },
-    bowler: { min: 3, max: 6 },
-    allRounder: { min: 1, max: 4 },
-    wicketKeeper: { min: 1, max: 4 },
-  };
+  //let roleCounts = {};
+  let roleCounts={
+    "selectedPlayerCount": 0,
+    "wk": 0,
+    "New Zealand": 0,
+    "bat": 0,
+    "ar": 0,
+    "bowl": 0,
+    "Afghanistan": 0
+}
   checkCount(roleCounts);
   allPlayer.forEach((player)=>{
     if(player.visible==false){
@@ -613,7 +596,8 @@ function validateCricketTeam(allPlayers) {
             player.disable=true;
             console.log("maximum reached for "+player.role +" role");
           }
-          if(roleCounts[player.role]>=1 && (11 - roleCounts['selectedPlayerCount'] - getMinimumRequiredPlayers('bat', roleCounts)- getMinimumRequiredPlayers('bowl', roleCounts)- getMinimumRequiredPlayers('wk', roleCounts))<=0){
+          if(roleCounts[player.role]>=1 && (11 - roleCounts['selectedPlayerCount'] - getMinimumRequiredPlayers('bat', roleCounts)- getMinimumRequiredPlayers('bowl', roleCounts)- getMinimumRequiredPlayers('wk', roleCounts))<=0)
+          {
               player.disable = true;
           }
         break;
@@ -622,7 +606,8 @@ function validateCricketTeam(allPlayers) {
             player.disable=true;
             console.log("maximum reached for "+player.role +" role");
           }
-          if(roleCounts[player.role]>=3 && (11 - roleCounts['selectedPlayerCount'] - getMinimumRequiredPlayers('wk', roleCounts)- getMinimumRequiredPlayers('bowl', roleCounts)- getMinimumRequiredPlayers('ar', roleCounts))<=0){
+          if(roleCounts[player.role]>=3 && (11 - roleCounts['selectedPlayerCount'] - getMinimumRequiredPlayers('wk', roleCounts)- getMinimumRequiredPlayers('bowl', roleCounts)- getMinimumRequiredPlayers('ar', roleCounts))<=0)
+          {
             player.disable = true;
           }
         break;
@@ -631,12 +616,12 @@ function validateCricketTeam(allPlayers) {
             player.disable=true;
             console.log("maximum reached for "+player.role +" role");
           }
-          if(roleCounts[player.role]>=3 && (11 - roleCounts['selectedPlayerCount'] - getMinimumRequiredPlayers('wk', roleCounts)- getMinimumRequiredPlayers('bat', roleCounts)- getMinimumRequiredPlayers('ar', roleCounts))<=0){
+          if(roleCounts[player.role]>=3 && (11 - roleCounts['selectedPlayerCount'] - getMinimumRequiredPlayers('wk', roleCounts)- getMinimumRequiredPlayers('bat', roleCounts)- getMinimumRequiredPlayers('ar', roleCounts))<=0)
+          {
             player.disable = true;
           }
         break;
       }
     }  
-
   })
 }
