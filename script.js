@@ -254,17 +254,14 @@ let data={
 }
 const allPlayer = [];
 let teamData = data['data']['teams'];
-
 for (let i in teamData) {
     for (let j in teamData[i]['squads']) {
         teamData[i]['squads'][j]['team'] = data['data']['teams'][i]['title'];
-        allPlayer.push(Object.assign(teamData[i]['squads'][j],{visible:false},{captain:false},{vicecaptain:false}));
+        allPlayer.push(Object.assign(teamData[i]['squads'][j],{visible:false},{captain:false},{vicecaptain:false},{disable:false}));
 
     }
 }
-
 const roleFilters = {}; // Create an object to store players by role
-
 // Loop through the players and group them by role
 allPlayer.forEach(player => {
     if (!roleFilters[player.role]) 
@@ -274,7 +271,7 @@ allPlayer.forEach(player => {
     roleFilters[player.role].push(player);
 });
 
-let selectedPlayers = [];
+//let selectedPlayers = [];
 function displayPlayersByRole(role) {
     //header color
     const buttons = document.querySelectorAll('.role-button');
@@ -347,16 +344,20 @@ function displayPlayersByRole(role) {
               alert('Cannot select more players from the same team');
               return;
             }
-        
+           
             player.visible = true;
             showPlayerInSection(allPlayer);
-          } else {
+          } 
+          else {
             // Deselect the player
             player.visible = false;
             showPlayerInSection(allPlayer);
           }
           // Toggle row background color
           row.style.backgroundColor = player.visible ? 'rgba(151, 170, 51, 0.4)' : '';
+          
+          //checkRoleRestrictions();
+          validateCricketTeam(allPlayer)
         });
         
         player.visible==true?row.style.backgroundColor='rgba(151,170,51,0.4)':row.style.backgroundColor='';
@@ -452,7 +453,8 @@ function getPlayerTypeStr(playerRole) {
         case 'bowl':
             return 'bowler';
         default:
-            return 'other';
+            return 
+            // Function to ge'other';
     }
 }
 
@@ -535,52 +537,106 @@ document.getElementById("nextButton").addEventListener("click", () => {
   });
 });
 
-let roleCounts = {
-  wk: 0,bat: 0,ar: 0,bowl: 0,teamAct:0,teamBct:0
-};
-function checkCount(){
-    for( let i in roleCounts){
-      roleCounts[i]=0;
-    }
+
+
+
+ function checkCount(roleCounts){
+
     allPlayer.forEach((player)=>{
       if(player.visible){
-        roleCounts[player.role]++
-        if(player.team=='New Zealand')
-        {
-          roleCounts.teamAct+=1
+        if(!roleCounts['selectedPlayerCount']){
+          roleCounts['selectedPlayerCount'] = 0;
         }
-        else{roleCounts.teamBct+=1}
+
+        if (!roleCounts[player.role]) 
+        {
+          roleCounts[player.role] = 0;
+        }
+        if(!roleCounts[player.team]){
+          roleCounts[player.team]=0;
+        }
+        roleCounts['selectedPlayerCount']++;
+        roleCounts[player.role]++;
+        roleCounts[player.team]++;
       }
     })
     console.log(roleCounts);
+} 
+
+function getMinimumRequiredPlayers(role, roleCounts){
+  let requiredCount = 0;
+  switch(role){
+    case 'wk':
+    case 'ar':
+      if(1- roleCounts[role] > 0) 
+        requiredCount = 1- roleCounts[role]; 
+      break;
+    case 'bat':
+    case 'bowl':
+      let requiredCount = 3- roleCounts[role] > 0;
+      if(3- roleCounts[role] > 0) 
+        return requiredCount = 3- roleCounts[role]; 
+      break;
+  }
+  return requiredCount;
 }
 
+function validateCricketTeam(allPlayers) {
+  let roleCounts = {};
+  const playerTypes = {
+    batsman: { min: 3, max: 6 },
+    bowler: { min: 3, max: 6 },
+    allRounder: { min: 1, max: 4 },
+    wicketKeeper: { min: 1, max: 4 },
+  };
+  checkCount(roleCounts);
+  allPlayer.forEach((player)=>{
+    if(player.visible==false){
+      // team based validation
+      if(roleCounts[player.team]>=7){
+        player.disable=true;
+        console.log("maximum count is reached"+player.team);
+      }
+      // role based validation
+      switch(player.role){
+        case 'wk':
+          if(roleCounts[player.role]>=4){
+            player.disable=true;
+            console.log("maximum reached for "+player.role +" role");
+          }
+          if(roleCounts[player.role]>=1 && (11 - roleCounts['selectedPlayerCount'] - getMinimumRequiredPlayers('bat', roleCounts)- getMinimumRequiredPlayers('bowl', roleCounts)- getMinimumRequiredPlayers('ar', roleCounts))<=0){
+              player.disable = true;
+          }
+        break;
+        case 'ar':
+          if(roleCounts[player.role]>=4){
+            player.disable=true;
+            console.log("maximum reached for "+player.role +" role");
+          }
+          if(roleCounts[player.role]>=1 && (11 - roleCounts['selectedPlayerCount'] - getMinimumRequiredPlayers('bat', roleCounts)- getMinimumRequiredPlayers('bowl', roleCounts)- getMinimumRequiredPlayers('wk', roleCounts))<=0){
+              player.disable = true;
+          }
+        break;
+        case 'bat':
+          if(roleCounts[player.role]>=6){
+            player.disable=true;
+            console.log("maximum reached for "+player.role +" role");
+          }
+          if(roleCounts[player.role]>=3 && (11 - roleCounts['selectedPlayerCount'] - getMinimumRequiredPlayers('wk', roleCounts)- getMinimumRequiredPlayers('bowl', roleCounts)- getMinimumRequiredPlayers('ar', roleCounts))<=0){
+            player.disable = true;
+          }
+        break;
+        case 'bowl':
+          if(roleCounts[player.role]>=6){
+            player.disable=true;
+            console.log("maximum reached for "+player.role +" role");
+          }
+          if(roleCounts[player.role]>=3 && (11 - roleCounts['selectedPlayerCount'] - getMinimumRequiredPlayers('wk', roleCounts)- getMinimumRequiredPlayers('bat', roleCounts)- getMinimumRequiredPlayers('ar', roleCounts))<=0){
+            player.disable = true;
+          }
+        break;
+      }
+    }  
 
-
-
-
-// Your existing code here
-
-// Add an event listener to each player's row in the player details section
-allPlayer.forEach(player => {
-  const row = document.createElement('tr');
-  row.setAttribute('class', 'row1');
-
- 
-
-  // Add the rest of your row content here
-  const playerTypeImage = getPlayerTypeImage(player.role);
-  const thumbUrl = player.team === "New Zealand" ? teamData.teama.thumb_url : teamData.teamb.thumb_url;
-  
-  row.innerHTML = `
-    <td><img src="${thumbUrl}" alt="Player Image" width="50"></td>
-    <td>${player.name}</td>
-    <td>${player.player_id}</td>
-    <td><img src="${playerTypeImage}" alt="Player Type" width="50"></td>
-  `;
-
-  tableBody.appendChild(row);
-});
-
-// Your existing code here
-
+  })
+}
